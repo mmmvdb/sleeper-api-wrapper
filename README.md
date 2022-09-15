@@ -304,8 +304,10 @@ from sleeper_wrapper import Players
 players = Players()
 ~~~
 <a name="get_all_players"></a>
-### Players.get_all_players()
+### Players.get_all_players(force)
 Gets all of the players in fantasy football. Data returned looks like: https://docs.sleeper.app/#fetch-all-players
+
+- force: (boolean) Sleeper requests one player call a day.  Sleeper-api-wrapper will store the results, and pull from that store if called again in the same day.  If force=True, this will force a Sleeper api call.
 
 <a name="get_trending_players"></a>
 ### Players.get_trending_players(sport, add_drop, hours, limit)
