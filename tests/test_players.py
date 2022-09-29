@@ -102,5 +102,34 @@ def test_get_all_players(capsys):
 	assert file_date == date.today()
 	
 	### TEST 3
-	# Really we should test that if we have fresh data in the file, we use it instead of an API call.
-	# I have no idea how I'd know where the data came from at this level though.
+	# Test that if we have data from the same day, we pull file data.
+	#		(cheating a bit here, going to mark the .json file's directory in a way I know if it got
+	#		 touched or not.  In this case... I'm just going to blow it away, leaving the timestamp.
+	#		 so we'll know if the sleeper_wrapper _attempted_ to call the API or not, assuming the 
+	#		 file creation stuff works as intended, which it should already be tested for above sorta
+	#		)
+	
+	# Last test should have given us today's data, unless run right at day end...  Blow it away
+	raw_data["sleeper_data"] = {}
+	
+	with open(data_full_path, 'w') as file:
+		file.write(json.dumps(raw_data))
+	
+	data = players.get_all_players()
+	
+	with open(data_full_path, 'r') as file:
+		raw_data = json.loads(file.read())
+		
+	assert not raw_data["sleeper_data"]
+	
+	
+	### TEST 4
+	# Test that if we have data from the same day, and we FORCE a data pull, we pull API data.
+	
+	# From the last test, we should have nasty data in file.  So if we get a real dict back... we are golden
+	data = players.get_all_players(force=True)
+	
+	with open(data_full_path, 'r') as file:
+		raw_data = json.loads(file.read())
+		
+	assert raw_data["sleeper_data"]
